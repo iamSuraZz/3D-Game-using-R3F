@@ -5,6 +5,13 @@ export default create(
   subscribeWithSelector((set) => {
     return {
       blocksCount: 3,
+      blockSeed: 0,
+
+      /**
+       * Time
+       */
+      startTime: 0,
+      endTime: 0,
 
       /**
        * Phases
@@ -16,6 +23,7 @@ export default create(
           if (state.phase === "ready")
             return {
               phase: "playing",
+              startTime: Date.now(),
             };
           return {};
         });
@@ -25,6 +33,7 @@ export default create(
           if (state.phase === "playing" || state.phase === "ended")
             return {
               phase: "ready",
+              blockSeed: Math.random(),
             };
           return {};
         });
@@ -34,6 +43,7 @@ export default create(
           if (state.phase === "playing")
             return {
               phase: "ended",
+              endTime: Date.now(),
             };
 
           return {};
