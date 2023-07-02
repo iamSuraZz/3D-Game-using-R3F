@@ -9,9 +9,9 @@ body,
   background: ivory;
 }
 
-/** 
-* Interface
-*/
+/**
+ * Interface
+ */
 .interface {
   position: fixed;
   top: 0;
@@ -23,9 +23,8 @@ body,
 }
 
 /**
-* Time
-**/
-
+ * Time
+ */
 .time {
   position: absolute;
   top: 15%;
@@ -39,8 +38,8 @@ body,
 }
 
 /**
-* Restart
-**/
+ * Restart
+ */
 .restart {
   display: flex;
   justify-content: center;

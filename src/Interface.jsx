@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import "./style.css";
 import { useKeyboardControls } from "@react-three/drei";
-import useGame from "./stores/useGame";
+import useGame from "./stores/useGame.jsx";
+import { useEffect, useRef } from "react";
 import { addEffect } from "@react-three/fiber";
 
-const Interface = () => {
+export default function Interface() {
   const time = useRef();
+
   const restart = useGame((state) => state.restart);
   const phase = useGame((state) => state.phase);
 
@@ -30,6 +30,7 @@ const Interface = () => {
 
       if (time.current) time.current.textContent = elapsedTime;
     });
+
     return () => {
       unsubscribeEffect();
     };
@@ -41,12 +42,14 @@ const Interface = () => {
       <div ref={time} className="time">
         0.00
       </div>
+
       {/* Restart */}
       {phase === "ended" && (
         <div className="restart" onClick={restart}>
           Restart
         </div>
       )}
+
       {/* Controls */}
       <div className="controls">
         <div className="raw">
@@ -54,7 +57,7 @@ const Interface = () => {
         </div>
         <div className="raw">
           <div className={`key ${leftward ? "active" : ""}`}></div>
-          <div className={`key  ${backward ? "active" : ""}`}></div>
+          <div className={`key ${backward ? "active" : ""}`}></div>
           <div className={`key ${rightward ? "active" : ""}`}></div>
         </div>
         <div className="raw">
@@ -63,6 +66,4 @@ const Interface = () => {
       </div>
     </div>
   );
-};
-
-export default Interface;
+}

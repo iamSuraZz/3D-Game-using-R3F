@@ -1,10 +1,8 @@
-import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import { useMemo, useState, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Float, Text, useGLTF } from "@react-three/drei";
-
-THREE.ColorManagement.legacyMode = false;
 
 const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -13,12 +11,12 @@ const floor2Material = new THREE.MeshStandardMaterial({ color: "greenyellow" });
 const obstacleMaterial = new THREE.MeshStandardMaterial({ color: "orangered" });
 const wallMaterial = new THREE.MeshStandardMaterial({ color: "slategrey" });
 
-const BlockStart = ({ position = [0, 0, 0] }) => {
+export function BlockStart({ position = [0, 0, 0] }) {
   return (
     <group position={position}>
       <Float floatIntensity={0.25} rotationIntensity={0.25}>
         <Text
-          font="./bebas-neue-v9-latin-regular.woff"
+          font="/bebas-neue-v9-latin-regular.woff"
           scale={0.5}
           maxWidth={0.25}
           lineHeight={0.75}
@@ -30,8 +28,6 @@ const BlockStart = ({ position = [0, 0, 0] }) => {
           <meshBasicMaterial toneMapped={false} />
         </Text>
       </Float>
-
-      {/* Floor */}
       <mesh
         geometry={boxGeometry}
         material={floor1Material}
@@ -41,24 +37,25 @@ const BlockStart = ({ position = [0, 0, 0] }) => {
       />
     </group>
   );
-};
+}
 
-export const BlockEnd = ({ position = [0, 0, 0] }) => {
-  const hamburger = useGLTF("./hamburger.glb");
+export function BlockEnd({ position = [0, 0, 0] }) {
+  const hamburger = useGLTF("/hamburger.glb");
+
   hamburger.scene.children.forEach((mesh) => {
     mesh.castShadow = true;
   });
+
   return (
     <group position={position}>
       <Text
+        font="/bebas-neue-v9-latin-regular.woff"
         scale={1}
-        font="./bebas-neue-v9-latin-regular.woff"
         position={[0, 2.25, 2]}
       >
-        Finish
+        FINISH
         <meshBasicMaterial toneMapped={false} />
       </Text>
-      {/* Floor */}
       <mesh
         geometry={boxGeometry}
         material={floor1Material}
@@ -77,9 +74,9 @@ export const BlockEnd = ({ position = [0, 0, 0] }) => {
       </RigidBody>
     </group>
   );
-};
+}
 
-export const BlockSpinner = ({ position = [0, 0, 0] }) => {
+export function BlockSpinner({ position = [0, 0, 0] }) {
   const obstacle = useRef();
   const [speed] = useState(
     () => (Math.random() + 0.2) * (Math.random() < 0.5 ? -1 : 1)
@@ -92,6 +89,7 @@ export const BlockSpinner = ({ position = [0, 0, 0] }) => {
     rotation.setFromEuler(new THREE.Euler(0, time * speed, 0));
     obstacle.current.setNextKinematicRotation(rotation);
   });
+
   return (
     <group position={position}>
       <mesh
@@ -118,11 +116,10 @@ export const BlockSpinner = ({ position = [0, 0, 0] }) => {
       </RigidBody>
     </group>
   );
-};
+}
 
-export const BlockLimbo = ({ position = [0, 0, 0] }) => {
+export function BlockLimbo({ position = [0, 0, 0] }) {
   const obstacle = useRef();
-
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
 
   useFrame((state) => {
@@ -162,11 +159,10 @@ export const BlockLimbo = ({ position = [0, 0, 0] }) => {
       </RigidBody>
     </group>
   );
-};
+}
 
-export const BlockAxe = ({ position = [0, 0, 0] }) => {
+export function BlockAxe({ position = [0, 0, 0] }) {
   const obstacle = useRef();
-
   const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
 
   useFrame((state) => {
@@ -206,7 +202,7 @@ export const BlockAxe = ({ position = [0, 0, 0] }) => {
       </RigidBody>
     </group>
   );
-};
+}
 
 function Bounds({ length = 1 }) {
   return (
@@ -233,22 +229,23 @@ function Bounds({ length = 1 }) {
           scale={[4, 1.5, 0.3]}
           receiveShadow
         />
+        <CuboidCollider
+          type="fixed"
+          args={[2, 0.1, 2 * length]}
+          position={[0, -0.1, -(length * 2) + 2]}
+          restitution={0.2}
+          friction={1}
+        />
       </RigidBody>
-      <CuboidCollider
-        args={[2, 0.2, 2 * length]}
-        position={[0, -0.1, -(length * 2) + 2]}
-        restitution={0.2}
-        friction={1}
-      />
     </>
   );
 }
 
-export const Level = ({
+export function Level({
   count = 5,
   types = [BlockSpinner, BlockAxe, BlockLimbo],
   seed = 0,
-}) => {
+}) {
   const blocks = useMemo(() => {
     const blocks = [];
 
@@ -259,15 +256,18 @@ export const Level = ({
 
     return blocks;
   }, [count, types, seed]);
+
   return (
     <>
       <BlockStart position={[0, 0, 0]} />
+
       {blocks.map((Block, index) => (
         <Block key={index} position={[0, 0, -(index + 1) * 4]} />
       ))}
+
       <BlockEnd position={[0, 0, -(count + 1) * 4]} />
 
       <Bounds length={count + 2} />
     </>
   );
-};
+}
